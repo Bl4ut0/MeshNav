@@ -2,6 +2,14 @@
 # Ignore local deployment settings containing path variables
 DeployConfig.json
 
+# Ignore developer deployment and debugging scripts
+Deploy.ps1
+ParseLogs.ps1
+
+# Ignore developer documentation and AI rules
+docs/
+.cursorrules
+
 # OS files
 .DS_Store
 Thumbs.db
