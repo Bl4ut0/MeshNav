@@ -5,5 +5,4 @@
 ## Author: Antigravity
 ## SavedVariables: MeshNavDB
 
-Bindings.xml
 MeshNav.lua
