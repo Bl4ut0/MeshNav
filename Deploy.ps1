@@ -1,4 +1,4 @@
-﻿# Deploy.ps1
+# Deploy.ps1
 # Script to bump version numbers and deploy MeshNav to your local WoW client.
 # Run with: Set-ExecutionPolicy RemoteSigned -Scope Process
 # Usage: 
@@ -65,8 +65,9 @@ if (-not $WoWPath -or -not (Test-Path $WoWPath)) {
 Write-Host "Target Client AddOns folder: $WoWPath" -ForegroundColor Green
 
 # 2. Version Bump Logic
-$TOCFile = Join-Path $PSScriptRoot "MeshNav\MeshNav.toc"
-$LuaFile = Join-Path $PSScriptRoot "MeshNav\MeshNav.lua"
+$TOCFile = Join-Path $PSScriptRoot "MeshNav.toc"
+$LuaFile = Join-Path $PSScriptRoot "MeshNav.lua"
+$BindingsFile = Join-Path $PSScriptRoot "Bindings.xml"
 
 if ($Bump -ne "none") {
     Write-Host "Bumping version ($Bump)..." -ForegroundColor Yellow
@@ -121,8 +122,14 @@ if (-not (Test-Path $DestFolder)) {
 
 Write-Host "Deploying files to local WoW client..." -ForegroundColor Yellow
 
-$SourceFolder = Join-Path $PSScriptRoot "MeshNav"
-Copy-Item -Path "$SourceFolder\*" -Destination $DestFolder -Recurse -Force
+# Copy only the necessary client addon files
+$FilesToCopy = @($TOCFile, $LuaFile, $BindingsFile)
+foreach ($file in $FilesToCopy) {
+    if (Test-Path $file) {
+        $destFile = Join-Path $DestFolder (Split-Path $file -Leaf)
+        Copy-Item -Path $file -Destination $destFile -Force
+    }
+}
 
 Write-Host "Deployment Completed Successfully!" -ForegroundColor Green
 Write-Host "In WoW, type '/reload' to load the new version." -ForegroundColor Gray

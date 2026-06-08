@@ -1,4 +1,4 @@
-﻿# Deployment and Versioning Protocols
+# Deployment and Versioning Protocols
 
 This document outlines the protocols for pushing updates to your local WoW client and managing database migrations when rolling out major release updates.
 
@@ -49,15 +49,15 @@ You can run the script with a `-Bump` parameter to automatically update the vers
 
 ### How the Script Works
 - **Path Auto-Location**: The script scans standard Windows directories for a World of Warcraft `_classic_` installation. If found, it saves this path in a local `DeployConfig.json` file for future uses. If not found, it prompts you for the path.
-- **TOC Bumping**: It parses and updates `## Version: X.Y.Z` in [MeshNav.toc](file:///c:/Dev%20Projects/MeshLPS/MeshNav/MeshNav.toc).
-- **Lua Bumping**: It converts `X.Y.Z` into a clean numerical representation (e.g. `1.0.0` becomes `10000`) and replaces `local DB_VERSION = <num>` in [MeshNav.lua](file:///c:/Dev%20Projects/MeshLPS/MeshNav/MeshNav.lua).
-- **Copying**: It copies the entire `MeshNav/` directory to the WoW AddOns folder.
+- **TOC Bumping**: It parses and updates `## Version: X.Y.Z` in [MeshNav.toc](file:///c:/Dev%20Projects/MeshLPS/MeshNav.toc).
+- **Lua Bumping**: It converts `X.Y.Z` into a clean numerical representation (e.g. `1.0.0` becomes `10000`) and replaces `local DB_VERSION = <num>` in [MeshNav.lua](file:///c:/Dev%20Projects/MeshLPS/MeshNav.lua).
+- **Copying**: It copies only the necessary addon files (`MeshNav.toc`, `MeshNav.lua`, `Bindings.xml`) to the WoW AddOns folder.
 
 ---
 
 ## 3. In-Game Database Deployment Protocol
 
-To prevent SavedVariables from breaking when structural changes occur, [MeshNav.lua](file:///c:/Dev%20Projects/MeshLPS/MeshNav/MeshNav.lua) employs an automatic migration checker on load:
+To prevent SavedVariables from breaking when structural changes occur, [MeshNav.lua](file:///c:/Dev%20Projects/MeshLPS/MeshNav.lua) employs an automatic migration checker on load:
 
 1. **DB_VERSION Identifier**: The Lua file declares a constant representing the build version:
    ```lua
