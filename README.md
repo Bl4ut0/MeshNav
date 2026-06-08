@@ -9,11 +9,13 @@ By constructing a local mesh network using discrete range-check APIs and inter-c
 ## 🚀 Key Features
 
 *   **Real-time 2D minimap HUD**: A circular, glassmorphic HUD showing party/raid members as class-colored dots.
+*   **Hostile & Friendly NPC Tracking**: Scans nearby targets, focus, and visible nameplates (`nameplate1` to `nameplate40`) to map and display mobs.
+*   **High Contrast Minimap**: Red dots represent hostile enemies, and green dots represent friendly NPCs, serving as a clean, high-contrast spatial map.
 *   **Concentric Range Rings**: Displays range boundaries at **10yd**, **28yd**, and **40yd** thresholds.
 *   **Dynamic Group Support**: Automatically scales from standard **5-man parties** to **10-man and 40-man raid groups** by alphabetically sorting rosters deterministically.
 *   **Keybind-Based Text-to-Speech (TTS)**: Trigger-based spatial feedback (e.g. *"Tank at 2 o'clock, 18 yards"*) designed for blind and visually impaired player navigation.
 *   **Target Locking**: Set a designated player (like the Tank or healer) as your "Guide" (via right-click on their HUD dot or `/mn guide <name>`) to lock-on your TTS feedback.
-*   **Auto-Clamping Out-of-Range Units**: Clamps units beyond 40 yards to the outer rim of the radar at `40% opacity`, showing their last known vector.
+*   **Auto-Clamping Out-of-Range Units**: Clamps players and mobs beyond 40 yards to the outer rim of the radar at `35%-40% opacity`, showing their last known direction.
 *   **PowerShell Developer Tools**: Automatic version-bumping deployment scripts and SavedVariables history logs parsers.
 
 ---
@@ -58,11 +60,11 @@ MeshNav registers a native action in WoW's options menu so you can ping your gui
     *   `28-30 yds`: 30yd item range check (`IsItemInRange(itemID_30, unit)`)
     *   `30-40 yds`: 40yd item range check (`IsItemInRange(itemID_40, unit)`)
     *   `40+ yds`: Out-of-range fallback
-2.  **Broadcasting**: Each client serializes their distance vector (e.g. `3:24015`) and broadcasts it to the group via `C_ChatInfo.SendAddonMessage` on prefix `MN_SYNC` every 0.5s.
-3.  **Trilateration (Verlet Relaxation)**: 
-    *   The client solves the 2D constellation coordinates by treating distances as spring constraints.
-    *   The local player is anchored at $(0, 0)$.
-    *   The solver runs 30 iterations of relaxation per frame.
+2.  **Mob Ingestion & Bandwidth Sorting**: Each client scans targets, focus, and active nameplates for creature GUIDs. Nearby mobs are sorted by proximity. To minimize packet size, GUIDs are hashed into 4-character hex strings, and only the 5 closest mobs are transmitted in sync messages.
+3.  **Broadcasting**: Each client serializes their player distances and visible mob vectors (e.g. `3:24015|a1f2:H:3,b3e2:H:2`) and broadcasts it to the group via `C_ChatInfo.SendAddonMessage` on prefix `MN_SYNC` every 0.5s.
+4.  **Trilateration (Verlet Relaxation)**: 
+    *   The client solves the player coordinate constellation first by treating distances as spring constraints (locking the local player at $(0,0)$).
+    *   Next, mob coordinates are solved relative to the players. If only one player reports a mob, it is placed at the target distance in front of that player. If multiple players report range to the same mob GUID, the Verlet solver relaxes the mob node to the intersection of the circles.
     *   Calculated coordinates are smoothed using a $15\%$ linear interpolation per frame to eliminate jitter.
 
 ---

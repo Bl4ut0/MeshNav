@@ -1,8 +1,9 @@
-## Interface: 20505
+﻿## Interface: 20505
 ## Title: MeshNav
 ## Notes: Distributed Relative Positioning System for Classic instances
-## Version: 1.0.0
+## Version: 1.1.0
 ## Author: Antigravity
 ## SavedVariables: MeshNavDB
 
 MeshNav.lua
+
