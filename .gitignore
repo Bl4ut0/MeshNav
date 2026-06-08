@@ -1,0 +1,13 @@
+# .gitignore
+# Ignore local deployment settings containing path variables
+DeployConfig.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temp files
+*.log
+*.tmp
+temp/
+scratch/

@@ -1,0 +1,12 @@
+﻿# .pkgmeta
+# Configuration file for the CurseForge/BigWigs Packager GitHub Action
+
+# Exclude development scripts, configurations, and local docs from the CurseForge zip release
+ignore:
+  - Deploy.ps1
+  - ParseLogs.ps1
+  - DeployConfig.json
+  - DEPLOYMENT.md
+  - .gitignore
+  - .pkgmeta
+
